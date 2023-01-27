@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 void main() {
   runApp(const MyApp());
 }
@@ -13,102 +12,81 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home:  MyHomePage(),
     );
   }
 }
-
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({Key? key}) : super(key: key);
 
-  // My Snack Bar Start
-  MySnackBar(message, context) {
-    return ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("message")));
-  }
+  static List<String> fruitname =['Apple','Banana','Mango','Orange','pineapple'];
+  static List url = ['https://www.applesfromny.com/wp-content/uploads/2020/05/Jonagold_NYAS-Apples2.png',
+    'https://cdn.mos.cms.futurecdn.net/42E9as7NaTaAi4A6JcuFwG-1200-80.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hapus_Mango.jpg/220px-Hapus_Mango.jpg',
+    'https://5.imimg.com/data5/VN/YP/MY-33296037/orange-600x600-500x500.jpg',
+    'https://5.imimg.com/data5/GJ/MD/MY-35442270/fresh-pineapple-500x500.jpg'];
 
-  // My Alert Dialog Bar Start
 
-  MyAlertDialog(context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Expanded(
-            child: AlertDialog(
-              title: Text("Alert"),
-              content: Text("Do you want to delete"),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      MySnackBar("Delete Success", context);
-                      Navigator.of(context).pop();
-                    },
-                    child: Text("Yes")),
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text("No"))
-              ],
-            ),
-          );
-        });
-  }
+  final List<FruitDataModel> Fruitdata = List.generate(
+      fruitname.length,
+          (index)
+      => FruitDataModel('${fruitname[index]}', '${url[index]}','${fruitname[index]} Description...'));
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Navigation Drawer"),
-        ),
-        drawer: Drawer(
-          child: ListView(
-            children: [
-              DrawerHeader(
-                  child: UserAccountsDrawerHeader(
-                accountName: Text("Fox"),
-                accountEmail: Text("fox@gmail.com"),
-                currentAccountPicture: Image.network(
-                  "https://media.wired.com/photos/593261cab8eb31692072f129/master/w_2560%2Cc_limit/85120553.jpg",
-                ),
-              )),
-              ListTile(
-                leading: Icon(Icons.home),
-                title: Text("Home"),
-                onTap: () {
-                  MySnackBar("Home", context);
-                },
+      appBar: AppBar(title: Text("MyApps"),),
+      body: ListView.builder(
+        itemCount:Fruitdata.length ,
+        itemBuilder:(context, index){
+          return Card(
+            child:ListTile(
+              title: Text(Fruitdata[index].name),
+              leading: SizedBox(
+                width: 50,
+                height: 50,
+                child: Image.network(Fruitdata[index].ImageUrl),
               ),
-              ListTile(
-                leading: Icon(Icons.contacts),
-                title: Text("contacts"),
-                onTap: () {
-                  MySnackBar("contacts", context);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.person),
-                title: Text("person"),
-                onTap: () {
-                  MySnackBar("person", context);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.phone),
-                title: Text("phone"),
-                onTap: () {
-                  MySnackBar("phone", context);
-                },
-              ),
-            ],
-          ),
-          //child: ,
-        ),
-        body: Center(
-          child: ElevatedButton(
-              onPressed: () {MyAlertDialog(context);}, child: Text("Show Alert Dialog")),
-        ));
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>FruitDetail(fruitDataModel: Fruitdata[index],)));
+              },
+            ) ,
+          );
+        },
+      ),
+    );
+  }
+}
+
+
+class FruitDataModel{
+  final String name, ImageUrl, desc;
+
+  FruitDataModel(this.name, this.ImageUrl, this.desc);
+}
+
+
+class FruitDetail extends StatelessWidget {
+
+
+  final FruitDataModel fruitDataModel;
+  const FruitDetail({Key? key, required this.fruitDataModel}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(fruitDataModel.name),),
+      body: Column(
+        // crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.network(fruitDataModel.ImageUrl),
+          Text(fruitDataModel.desc)
+        ],
+      ),
+    );
   }
 }
